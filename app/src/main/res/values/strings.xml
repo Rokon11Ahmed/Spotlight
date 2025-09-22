@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Sample</string>
+    <string name="IDS_FAB_DESCRIPTION">Fab Button for add new budget</string>
+    <string name="IDS_TAB_ONE">Tab 1</string>
+    <string name="TDS_TAB_TWO">Tab 2</string>
+    <string name="TDS_SUBMIT">Submit</string>
+</resources>
