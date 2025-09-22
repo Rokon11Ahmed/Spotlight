@@ -33,7 +33,7 @@ allprojects {
 ## Step 2: Add dependency in your module `build.gradle`:
 
 ```dependencies {
-    implementation 'com.github.rokon11ahmed:spotlight:v0.0.1'
+    implementation 'com.github.rokon11ahmed:spotlight:0.0.1'
 }
 ```
 ## Usage Example:
