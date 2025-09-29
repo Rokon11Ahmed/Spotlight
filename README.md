@@ -1,4 +1,4 @@
-# Spotlight  
+# Spotlight [![v](https://img.shields.io/github/tag/KeepSafe/TapTargetView.svg?label=jitpack)](https://jitpack.io/#Rokon11Ahmed/Spotlight)
 
 A lightweight, fully customizable **Spotlight** library for Android.  
 Highlight any view in your app, guide users with info cards, pulse animations, and step navigation — all programmatically without XML.  
@@ -37,7 +37,7 @@ allprojects {
 
 ```
 dependencies {
-    implementation 'com.github.rokon11ahmed:spotlight:0.0.1'
+    implementation 'com.github.rokon11ahmed:spotlight:1.0.0'
 }
 ```
 ## Usage Example:
