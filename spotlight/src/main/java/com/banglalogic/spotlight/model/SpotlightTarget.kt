@@ -1,4 +1,4 @@
-package com.banglalogic.daymate.spotlight.model
+package com.banglalogic.spotlight.model
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView

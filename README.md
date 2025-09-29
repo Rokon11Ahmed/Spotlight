@@ -22,7 +22,8 @@ Highlight any view in your app, show info cards, pulse animations, and guide you
 
 ### Step 1: Add JitPack repository in your root `build.gradle`:
 
-```gradle
+```
+gradle
 allprojects {
     repositories {
         ...
@@ -32,13 +33,15 @@ allprojects {
 ```
 ## Step 2: Add dependency in your module `build.gradle`:
 
-```dependencies {
+```
+dependencies {
     implementation 'com.github.rokon11ahmed:spotlight:0.0.1'
 }
 ```
 ## Usage Example:
 
-```// Create Spotlight instance using Builder
+```
+// Create Spotlight instance using Builder
 val spotlight = Spotlight.Builder(requireContext())
     .addStep(
         SpotlightStep(

@@ -1,4 +1,4 @@
-package com.banglalogic.daymate.spotlight
+package com.banglalogic.spotlight
 
 import android.view.View
 import android.view.ViewGroup

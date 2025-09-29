@@ -1,6 +1,5 @@
-package com.banglalogic.daymate.spotlight.model
+package com.banglalogic.spotlight.model
 
-import android.view.View
 
 data class SpotlightStep(
     val target: SpotlightTarget,
@@ -9,4 +8,8 @@ data class SpotlightStep(
     val shape: SpotlightShape
 )
 
-enum class SpotlightShape { CIRCLE, RECTANGLE, ROUNDED_RECT }
+enum class SpotlightShape { CIRCLE, RECTANGLE, ROUNDED_RECT, OVAL }
+
+enum class CardPosition { AUTO, ABOVE, BELOW, LEFT, RIGHT, CENTER }
+
+enum class ShapeAnimation { NONE, PULSE, BREATHING, BOUNCE }

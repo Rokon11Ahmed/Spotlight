@@ -5,17 +5,19 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
-import androidx.annotation.ColorInt
-import com.banglalogic.daymate.spotlight.model.SpotlightShape
-import kotlin.math.max
+import android.view.animation.BounceInterpolator
+import com.banglalogic.spotlight.model.ShapeAnimation
+import com.banglalogic.spotlight.model.SpotlightShape
 
 class SpotlightHighlightView @JvmOverloads constructor(
     context: Context,
@@ -23,9 +25,9 @@ class SpotlightHighlightView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    // overlay paint (color may change at runtime)
+    // overlay paint (dimming)
     private val overlayPaint = Paint().apply {
-        color = Color.parseColor("#99000000") // default semi-transparent overlay
+        color = 0x99000000.toInt() // default semi-transparent overlay
     }
 
     // paint used to "erase" overlay (PorterDuff CLEAR)
@@ -36,53 +38,99 @@ class SpotlightHighlightView @JvmOverloads constructor(
 
     private var targetRect: RectF? = null
     private var shape: SpotlightShape = SpotlightShape.RECTANGLE
-    private var pulseScale = 1f
+    private var paddingPx: Int = 0
 
+    // animation state
+    private var pulseScale = 1f
     private var pulseAnimator: ValueAnimator? = null
     private var fadeAnimator: ValueAnimator? = null
+
+    // runtime preferences (defaults)
+    private var shapeAnimation: ShapeAnimation = ShapeAnimation.PULSE
+    private var useBlur: Boolean = false
 
     init {
         // Required so PorterDuff CLEAR works correctly
         setLayerType(LAYER_TYPE_HARDWARE, null)
-        alpha = 0f // start invisible, let parent animate in if desired
+        alpha = 0f // start invisible; parent may animate in
     }
 
     /**
      * Change overlay (dimming) color at runtime.
-     * Call before or after setTarget — view will invalidate.
      */
-    fun setOverlayColor(@ColorInt color: Int) {
+    fun setOverlayColor(color: Int) {
         overlayPaint.color = color
         invalidate()
     }
 
     /**
-     * Set the target view to highlight. Assumes the target view is already measured and positioned
-     * (i.e. you call this after your awaitMeasured / doOnPreDraw logic in Spotlight).
+     * Simple setTarget overload used by showStep().
+     * Keeps previously-set animation/blur preferences intact.
      */
-    fun setTarget(view: View, shape: SpotlightShape) {
-        // stop any previous pulse so we don't leak or run two animators
+    fun setTarget(view: View, shape: SpotlightShape, padding: Int) {
+        setTarget(view, shape, padding, this.shapeAnimation, this.useBlur)
+    }
+
+    /**
+     * Full setTarget with explicit animation & blur choices.
+     */
+    fun setTarget(view: View, shape: SpotlightShape, padding: Int, shapeAnimation: ShapeAnimation, useBlur: Boolean) {
         stopPulseAnimation()
 
         val location = IntArray(2)
+        // location in window so overlay aligns properly
         view.getLocationInWindow(location)
 
         targetRect = RectF(
-            location[0].toFloat(),
-            location[1].toFloat(),
-            (location[0] + view.width).toFloat(),
-            (location[1] + view.height).toFloat()
+            location[0].toFloat() - padding,
+            location[1].toFloat() - padding,
+            (location[0] + view.width + padding).toFloat(),
+            (location[1] + view.height + padding).toFloat()
         )
 
         this.shape = shape
-        // start pulse after rect is set
-        startPulseAnimation()
-        // fade in highlight view if hidden
+        this.paddingPx = padding
+        this.shapeAnimation = shapeAnimation
+        this.useBlur = useBlur
+
+        // apply blur if requested (API 31+)
+        setBlurEnabled(useBlur)
+
+        // start shape animation (depending on chosen mode)
+        when (shapeAnimation) {
+            ShapeAnimation.NONE -> { clearAnimation() }
+            ShapeAnimation.PULSE -> startPulseAnimation()
+            ShapeAnimation.BREATHING -> startBreathingAnimation()
+            ShapeAnimation.BOUNCE -> startBounceAnimation()
+        }
+
+        // fade in
         fadeIn()
         invalidate()
     }
 
-    private fun startPulseAnimation() {
+    /**
+     * Enable / disable blur (applies RenderEffect on this view when available).
+     * Note: RenderEffect blurs the view's *content*; blurring underlying activity content reliably
+     * would require different approach (snapshot/blur) — this simple approach is provided as requested.
+     */
+    fun setBlurEnabled(enabled: Boolean) {
+        useBlur = enabled
+        if (useBlur && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // moderate blur radius - adjust if you want stronger/weaker blur
+            setRenderEffect(RenderEffect.createBlurEffect(18f, 18f, Shader.TileMode.CLAMP))
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            setRenderEffect(null)
+        }
+        // For older versions we do nothing here (no RenderScript fallback implemented)
+        invalidate()
+    }
+
+    /**
+     * Start a subtle pulse animation.
+     */
+    fun startPulseAnimation() {
+        stopPulseAnimation()
         pulseAnimator = ValueAnimator.ofFloat(1f, 1.08f, 1f).apply {
             duration = 900L
             repeatCount = ValueAnimator.INFINITE
@@ -95,10 +143,56 @@ class SpotlightHighlightView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Start a slower breathing-style animation.
+     */
+    fun startBreathingAnimation() {
+        stopPulseAnimation()
+        pulseAnimator = ValueAnimator.ofFloat(1f, 1.15f, 0.95f, 1f).apply {
+            duration = 2000L
+            repeatCount = ValueAnimator.INFINITE
+            interpolator = AccelerateDecelerateInterpolator()
+            addUpdateListener {
+                pulseScale = it.animatedValue as Float
+                invalidate()
+            }
+            start()
+        }
+    }
+
+    /**
+     * Start a bounce-like animation.
+     */
+    fun startBounceAnimation() {
+        stopPulseAnimation()
+        pulseAnimator = ValueAnimator.ofFloat(1f, 1.2f, 1f).apply {
+            duration = 700L
+            repeatCount = ValueAnimator.INFINITE
+            interpolator = BounceInterpolator()
+            addUpdateListener {
+                pulseScale = it.animatedValue as Float
+                invalidate()
+            }
+            start()
+        }
+    }
+
+    /**
+     * Stop any shape/pulse animation and reset scale.
+     */
     private fun stopPulseAnimation() {
         pulseAnimator?.cancel()
         pulseAnimator = null
         pulseScale = 1f
+    }
+
+    /**
+     * Clear all animations (pulse + fade) and reset state.
+     */
+    override fun clearAnimation() {
+        stopPulseAnimation()
+        fadeAnimator?.cancel()
+        fadeAnimator = null
     }
 
     private fun fadeIn() {
@@ -112,13 +206,14 @@ class SpotlightHighlightView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Crossfade out then call optional onEnd
+     */
     fun crossfadeOut(onEnd: (() -> Unit)? = null) {
         fadeAnimator?.cancel()
         fadeAnimator = ValueAnimator.ofFloat(alpha, 0f).apply {
             duration = 220L
-            addUpdateListener { valueAnimator ->
-                alpha = valueAnimator.animatedValue as Float
-            }
+            addUpdateListener { valueAnimator -> alpha = valueAnimator.animatedValue as Float }
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     onEnd?.invoke()
@@ -149,24 +244,27 @@ class SpotlightHighlightView @JvmOverloads constructor(
                     canvas.drawCircle(rect.centerX(), rect.centerY(), radius, clearPaint)
                 }
                 SpotlightShape.RECTANGLE -> {
-                    val scaled = RectF(
-                        rect.left - (rect.width() * (pulseScale - 1f) / 2f),
-                        rect.top - (rect.height() * (pulseScale - 1f) / 2f),
-                        rect.right + (rect.width() * (pulseScale - 1f) / 2f),
-                        rect.bottom + (rect.height() * (pulseScale - 1f) / 2f)
-                    )
+                    val scaled = scaleRect(rect)
                     canvas.drawRect(scaled, clearPaint)
                 }
                 SpotlightShape.ROUNDED_RECT -> {
-                    val scaled = RectF(
-                        rect.left - (rect.width() * (pulseScale - 1f) / 2f),
-                        rect.top - (rect.height() * (pulseScale - 1f) / 2f),
-                        rect.right + (rect.width() * (pulseScale - 1f) / 2f),
-                        rect.bottom + (rect.height() * (pulseScale - 1f) / 2f)
-                    )
+                    val scaled = scaleRect(rect)
                     canvas.drawRoundRect(scaled, 24f, 24f, clearPaint)
+                }
+                SpotlightShape.OVAL -> {
+                    val scaled = scaleRect(rect)
+                    canvas.drawOval(scaled, clearPaint)
                 }
             }
         }
+    }
+
+    private fun scaleRect(rect: RectF): RectF {
+        return RectF(
+            rect.left - (rect.width() * (pulseScale - 1f) / 2f),
+            rect.top - (rect.height() * (pulseScale - 1f) / 2f),
+            rect.right + (rect.width() * (pulseScale - 1f) / 2f),
+            rect.bottom + (rect.height() * (pulseScale - 1f) / 2f)
+        )
     }
 }
