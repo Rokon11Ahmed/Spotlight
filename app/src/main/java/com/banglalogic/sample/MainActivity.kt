@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
                     SpotlightTarget.TabTarget(tabLayout, 1),
                     "Second Tab",
                     "Tap here to see second tab item",
-                    SpotlightShape.RECTANGLE
+                    SpotlightShape.ROUNDED_RECT
                 )
             )
             .addStep(
@@ -73,21 +73,21 @@ class MainActivity : AppCompatActivity() {
                     SpotlightTarget.ViewTarget(submitButton),
                     "Submit",
                     "Tap here to submit data",
-                    SpotlightShape.ROUNDED_RECT
+                    SpotlightShape.OVAL
                 )
             )
 
             // 🔹 Overlay & card visuals
-            .overlayColor(Color.parseColor("#99000000"))   // dark overlay
-            .cardBackground(Color.parseColor("#CCffffff")) // info card background
+            .overlayColor(Color.parseColor("#B3000000"))   // dark overlay
+            .cardBackground(Color.parseColor("#CC333333")) // info card background
 
             // 🔹 Custom text styles
-            .titleStyle(20f, Color.WHITE, Typeface.DEFAULT_BOLD)
-            .descStyle(14f, Color.WHITE, Typeface.SANS_SERIF)
+            .titleStyle(28f, Color.WHITE, Typeface.MONOSPACE)
+            .descStyle(18f, Color.BLUE, Typeface.SANS_SERIF)
 
             // 🔹 Highlight config
-            .highlightPadding(12) // px padding around highlight
-            .shapeAnimation(ShapeAnimation.BREATHING) // NONE, PULSE, BREATHING, BOUNCE
+            .highlightPadding(0) // px padding around highlight
+            .shapeAnimation(ShapeAnimation.BOUNCE) // NONE, PULSE, BREATHING, BOUNCE
             .useBlurOverlay(false) // blur background instead of flat dim
 
             // 🔹 Card positioning (AUTO, ABOVE, BELOW, LEFT, RIGHT, CENTER)

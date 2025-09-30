@@ -79,7 +79,7 @@ class SpotlightHighlightView @JvmOverloads constructor(
 
         val location = IntArray(2)
         // location in window so overlay aligns properly
-        view.getLocationInWindow(location)
+        view.getLocationOnScreen(location)
 
         targetRect = RectF(
             location[0].toFloat() - padding,
@@ -191,8 +191,6 @@ class SpotlightHighlightView @JvmOverloads constructor(
      */
     override fun clearAnimation() {
         stopPulseAnimation()
-        fadeAnimator?.cancel()
-        fadeAnimator = null
     }
 
     private fun fadeIn() {
@@ -204,6 +202,12 @@ class SpotlightHighlightView @JvmOverloads constructor(
             }
             start()
         }
+    }
+
+    fun resetAnimations() {
+        stopPulseAnimation()
+        fadeAnimator?.cancel()
+        fadeAnimator = null
     }
 
     /**
