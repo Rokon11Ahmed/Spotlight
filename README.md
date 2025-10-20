@@ -1,8 +1,8 @@
 <h1 align="center">
-<img src="/docs/gif_file_1.gif" width="280" height="498" alt="Gif 1"/>
-<img src="/docs/gif_file_2.gif" width="280" height="498" alt="Gif 2"/>
-<img src="/docs/screenshot_1.png" width="280" height="498" alt="Screenshot 1"/>
-<img src="/docs/screenshot_2.png" width="280" height="498" alt="Screenshot 2"/><br/>
+<img src="/docs/gif_file_1.gif" width="220" height="600" alt="Gif 1"/>
+<img src="/docs/gif_file_2.gif" width="220" height="600" alt="Gif 2"/>
+<img src="/docs/screenshot_1.png" width="220" height="600" alt="Screenshot 1"/>
+<img src="/docs/screenshot_2.png" width="220" height="600" alt="Screenshot 2"/><br/>
 </h1>
 
 # Spotlight [![Maven Central](https://img.shields.io/maven-central/v/io.github.rokon11ahmed/spotlight.svg)](https://central.sonatype.com/artifact/io.github.rokon11ahmed/spotlight)
