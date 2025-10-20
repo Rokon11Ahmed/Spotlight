@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.mavenpublish)
     id("maven-publish")
 }
 
@@ -43,15 +44,56 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 }
 
+mavenPublishing {
+    coordinates(
+        "io.github.rokon11ahmed",
+        "spotlight",
+        "1.0.1")
+
+    pom {
+        name.set("Spotlight library")
+        description.set("A lightweight, fully customizable Spotlight library for Android.")
+        inceptionYear.set("2025")
+        url.set("https://github.com/Rokon11Ahmed/spotlight")
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+        developers {
+            developer {
+                id.set("Rokon11Ahmed")
+                name.set("Md Rokonuzzaman")
+                url.set("https://github.com/Rokon11Ahmed")
+            }
+        }
+        scm {
+            url.set("https://github.com/Rokon11Ahmed/spotlight")
+            connection.set("scm:git:git://github.com/Rokon11Ahmed/spotlight.git")
+            developerConnection.set("scm:git:ssh://git@github.com/Rokon11Ahmed/spotlight.git")
+        }
+    }
+
+    publishToMavenCentral(automaticRelease = true)
+
+    signAllPublications()
+}
+
 afterEvaluate {
     publishing {
         publications {
             create<MavenPublication>("release") {
                 from(components["release"])
-                groupId = "com.github.rokon11ahmed"
+                groupId = "io.github.rokon11ahmed"
                 artifactId = "spotlight"
-                version = "1.0.0"
+                version = "1.0.1"
             }
         }
     }
+}
+
+tasks.withType<PublishToMavenRepository>().configureEach {
+    dependsOn(tasks.withType<Sign>())
 }
