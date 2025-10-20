@@ -1,4 +1,4 @@
-# Spotlight [![v](https://img.shields.io/github/tag/Rokon11Ahmed/Spotlight.svg?label=jitpack)](https://jitpack.io/#Rokon11Ahmed/Spotlight)
+# Spotlight [![Maven Central](https://img.shields.io/maven-central/v/io.github.rokon11ahmed/spotlight.svg)](https://central.sonatype.com/artifact/io.github.rokon11ahmed/spotlight)
 
 A lightweight, fully customizable **Spotlight** library for Android.  
 Highlight any view in your app, guide users with info cards, pulse animations, and step navigation — all programmatically without XML.  
@@ -21,23 +21,13 @@ Highlight any view in your app, guide users with info cards, pulse animations, a
 
 ---
 
-## 📦 Installation (via JitPack)
+## 📦 Installation (via MavenCentral)
 
-### Step 1: Add JitPack repository in your root `build.gradle`:
-
-```gradle
-allprojects {
-    repositories {
-        ...
-        maven { url 'https://jitpack.io' }
-    }
-}
-```
-## Step 2: Add dependency in your module `build.gradle`:
+## Add dependency in your module `build.gradle`:
 
 ```
 dependencies {
-    implementation 'com.github.rokon11ahmed:spotlight:1.0.0'
+    implementation("io.github.rokon11ahmed:spotlight:1.0.2")
 }
 ```
 ## Usage Example:
