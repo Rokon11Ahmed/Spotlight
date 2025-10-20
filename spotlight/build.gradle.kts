@@ -26,11 +26,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 }
 
@@ -48,7 +48,7 @@ mavenPublishing {
     coordinates(
         "io.github.rokon11ahmed",
         "spotlight",
-        "1.0.1")
+        "1.0.2")
 
     pom {
         name.set("Spotlight library")
@@ -88,7 +88,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "io.github.rokon11ahmed"
                 artifactId = "spotlight"
-                version = "1.0.1"
+                version = "1.0.2"
             }
         }
     }

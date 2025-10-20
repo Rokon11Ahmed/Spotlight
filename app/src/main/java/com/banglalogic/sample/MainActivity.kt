@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                     SpotlightTarget.ViewTarget(submitButton),
                     "Submit",
                     "Tap here to submit data",
-                    SpotlightShape.OVAL
+                    SpotlightShape.ROUNDED_RECT
                 )
             )
 
@@ -82,19 +82,19 @@ class MainActivity : AppCompatActivity() {
             .cardBackground(Color.parseColor("#CC333333")) // info card background
 
             // 🔹 Custom text styles
-            .titleStyle(28f, Color.WHITE, Typeface.MONOSPACE)
-            .descStyle(18f, Color.BLUE, Typeface.SANS_SERIF)
+            .titleStyle(18f, Color.WHITE, Typeface.DEFAULT_BOLD)
+            .descStyle(14f, Color.WHITE, Typeface.DEFAULT)
 
             // 🔹 Highlight config
             .highlightPadding(0) // px padding around highlight
-            .shapeAnimation(ShapeAnimation.BOUNCE) // NONE, PULSE, BREATHING, BOUNCE
+            .shapeAnimation(ShapeAnimation.PULSE) // NONE, PULSE, BREATHING, BOUNCE
             .useBlurOverlay(false) // blur background instead of flat dim
 
             // 🔹 Card positioning (AUTO, ABOVE, BELOW, LEFT, RIGHT, CENTER)
             .cardPosition(CardPosition.AUTO)
 
             // 🔹 Buttons
-            .showButtons(true) // show Next/Skip buttons
+            .showButtons(false) // show Next/Skip buttons
 
             // 🔹 Callbacks
             .listener(object : SpotlightListener {
