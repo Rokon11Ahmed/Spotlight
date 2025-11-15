@@ -11,7 +11,6 @@ import android.widget.LinearLayout
 import android.widget.Space
 import android.widget.TextView
 import androidx.core.view.setPadding
-import com.banglalogic.daymate.spotlight.SpotlightHighlightView
 
 fun createOverlay(context: Context): OverlayViews {
     val root = FrameLayout(context).apply {

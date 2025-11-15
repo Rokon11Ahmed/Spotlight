@@ -1,4 +1,4 @@
-package com.banglalogic.daymate.spotlight
+package com.banglalogic.spotlight
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter

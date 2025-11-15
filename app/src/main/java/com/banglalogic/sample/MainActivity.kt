@@ -8,6 +8,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.banglalogic.spotlight.Spotlight
 import com.banglalogic.spotlight.model.CardPosition
 import com.banglalogic.spotlight.model.ShapeAnimation
@@ -23,6 +25,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var fabIcon : FloatingActionButton
     lateinit var tabLayout : TabLayout
     lateinit var submitButton : MaterialButton
+
+    lateinit var recyclerView : RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +45,11 @@ class MainActivity : AppCompatActivity() {
         fabIcon = findViewById(R.id.fab)
         tabLayout = findViewById(R.id.tab_layout)
         submitButton = findViewById(R.id.submit_button)
+        recyclerView = findViewById(R.id.recyclerview)
+
+        val adapter = SampleAdapter(List(5) { "Item #$it" })
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
         val spotlight = Spotlight.Builder(this)
             // Steps
@@ -57,6 +66,14 @@ class MainActivity : AppCompatActivity() {
                     SpotlightTarget.TabTarget(tabLayout, 0),
                     "First Tab",
                     "Tap here to see first tab item",
+                    SpotlightShape.RECTANGLE
+                )
+            )
+            .addStep(
+                SpotlightStep(
+                    SpotlightTarget.RecyclerItemTarget(recyclerView, 4),
+                    "Recycler Item",
+                    "This highlights item #3 in the list",
                     SpotlightShape.RECTANGLE
                 )
             )
@@ -82,12 +99,12 @@ class MainActivity : AppCompatActivity() {
             .cardBackground(Color.parseColor("#CC333333")) // info card background
 
             // 🔹 Custom text styles
-            .titleStyle(18f, Color.WHITE, Typeface.DEFAULT_BOLD)
-            .descStyle(14f, Color.WHITE, Typeface.DEFAULT)
+            //.titleStyle(28f, Color.WHITE, Typeface.MONOSPACE)
+            //.descStyle(18f, Color.BLUE, Typeface.SANS_SERIF)
 
             // 🔹 Highlight config
             .highlightPadding(0) // px padding around highlight
-            .shapeAnimation(ShapeAnimation.PULSE) // NONE, PULSE, BREATHING, BOUNCE
+            .shapeAnimation(ShapeAnimation.BREATHING) // NONE, PULSE, BREATHING, BOUNCE
             .useBlurOverlay(false) // blur background instead of flat dim
 
             // 🔹 Card positioning (AUTO, ABOVE, BELOW, LEFT, RIGHT, CENTER)
